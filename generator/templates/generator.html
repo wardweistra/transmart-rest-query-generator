@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>TranSMART REST Query Generator</title>
+	
+	<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+
+	<link href="/static/bootstrap-3.3.7-dist/css/bootstrap.min.css" rel="stylesheet">
+	<script src="/static/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+	
+	<link rel="stylesheet" href="/static/query-builder.default.min.css" />
+	<script src="/static/query-builder.standalone.min.js"></script>
+	
+</head>
+<body>
+	<div id="builder"></div>
+
+	<!-- button, on click function -->
+
+	<p><button id="generate">Generate query</button></p>
+	<p id="queryfield"></p>
+
+	<script>
+		$(function() {
+			$('button#generate').bind('click', function() {
+				var v = $('#builder').queryBuilder('getRules');
+				var tree = JSON.stringify(v);
+				document.getElementById("queryfield").innerHTML = tree;
+			});
+		});
+
+		$('#builder').queryBuilder(
+		{
+			filters: [
+			{
+				id: 'studyId',
+				label: 'Study ID',
+				type: 'string',
+				operators: ['equal']
+		  	}, {
+				id: 'category',
+				label: 'Category',
+				type: 'integer',
+				input: 'select',
+				values: {
+					1: 'Books',
+					2: 'Movies',
+					3: 'Music',
+					4: 'Tools',
+					5: 'Goodies',
+					6: 'Clothes'
+				},
+				operators: ['equal', 'not_equal', 'in', 'not_in', 'is_null', 'is_not_null']
+		  	}, {
+				id: 'in_stock',
+				label: 'In stock',
+				type: 'integer',
+				input: 'radio',
+				values: {
+				  1: 'Yes',
+				  0: 'No'
+				},
+				operators: ['equal']
+			}, {
+				id: 'price',
+				label: 'Price',
+				type: 'double',
+				validation: {
+					min: 0,
+					step: 0.01
+				}
+		  	}, {
+				id: 'id',
+				label: 'Identifier',
+				type: 'string',
+				placeholder: '____-____-____',
+				operators: ['equal', 'not_equal'],
+				validation: {
+					format: /^.{4}-.{4}-.{4}$/
+				}
+			}]
+		});
+	</script>
+</body>
+</html>
