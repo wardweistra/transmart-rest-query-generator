@@ -1,0 +1,2 @@
+recursive-include generator/templates *
+recursive-include generator/static *
