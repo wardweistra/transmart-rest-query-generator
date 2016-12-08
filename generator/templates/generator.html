@@ -17,20 +17,45 @@
 
 	<!-- button, on click function -->
 
-	<p><button id="generate">Generate query</button></p>
+	<p><button id="generate">Generate query call</button> <button id="reset">Reset query</button></p>
 	<p id="queryfield"></p>
 
 	<script>
 		$(function() {
 			$('button#generate').bind('click', function() {
 				var v = $('#builder').queryBuilder('getRules');
-				var tree = JSON.stringify(v);
-				document.getElementById("queryfield").innerHTML = tree;
+				var jsonquery = JSON.stringify(v);
+				// document.getElementById("queryfield").innerHTML = jsonquery;
+
+				$.ajax({
+				method: "POST",
+				contentType: "application/json",
+				url: "{{ url_for('json_to_query') }}",
+				data: jsonquery
+				})
+				.done(function( msg ) {
+					console.log( "Data Saved: " + msg.feedback );
+					document.getElementById("queryfield").innerHTML = msg.feedback;
+				})
+				.fail(function() {
+					document.getElementById("queryfield").innerHTML = 'Error generating call';
+				});
+
+				return false;
+			});
+		});
+
+		$(function() {
+			$('button#reset').bind('click', function() {
+				$('#builder').queryBuilder('reset');
 			});
 		});
 
 		$('#builder').queryBuilder(
 		{
+			plugins: [
+				'not-group'
+			],
 			filters: [
 			{
 				id: 'studyId',
