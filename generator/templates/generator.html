@@ -13,10 +13,24 @@
 	
 </head>
 <body>
+	<form id="querymetadata">
+		Select from
+		<label for="serverurl">tranSMART server</label>
+		<input type="text"
+			name="serverurl"
+			id="serverurl"
+			value="{{'{{url}}'}}"
+			required
+			placeholder="Server URL"
+		/>
+		all
+		<input class="entities" type="radio" name="entities" id="patients" value="patients" checked/>
+		<label for="patients">patients</label>
+		<input class="entities" type="radio" name="entities" id="observations" value="observations"/>
+		<label for="observations">observations</label>
+		where:
+	</form>
 	<div id="builder"></div>
-
-	<!-- button, on click function -->
-
 	<p><button id="generate">Generate query call</button> <button id="reset">Reset query</button></p>
 	<p id="queryfield"></p>
 
@@ -24,8 +38,10 @@
 		$(function() {
 			$('button#generate').bind('click', function() {
 				var v = $('#builder').queryBuilder('getRules');
-				var jsonquery = JSON.stringify(v);
-				// document.getElementById("queryfield").innerHTML = jsonquery;
+				var serverurl = document.getElementById('serverurl').value;
+				var entities = $('.entities:checked').val();
+				var querydata = {'url': serverurl, 'entities': entities, 'genericquery': v};
+				var jsonquery = JSON.stringify(querydata);
 
 				$.ajax({
 				method: "POST",
@@ -34,8 +50,8 @@
 				data: jsonquery
 				})
 				.done(function( msg ) {
-					console.log( "Data Saved: " + msg.feedback );
-					document.getElementById("queryfield").innerHTML = msg.feedback;
+					console.log( "Data Saved: " + msg.transmartquery );
+					document.getElementById("queryfield").innerHTML = msg.transmartquery;
 				})
 				.fail(function() {
 					document.getElementById("queryfield").innerHTML = 'Error generating call';
@@ -58,52 +74,20 @@
 			],
 			filters: [
 			{
-				id: 'studyId',
+				id: 'StudyNameConstraint',
 				label: 'Study ID',
 				type: 'string',
 				operators: ['equal']
-		  	}, {
-				id: 'category',
-				label: 'Category',
-				type: 'integer',
-				input: 'select',
-				values: {
-					1: 'Books',
-					2: 'Movies',
-					3: 'Music',
-					4: 'Tools',
-					5: 'Goodies',
-					6: 'Clothes'
-				},
-				operators: ['equal', 'not_equal', 'in', 'not_in', 'is_null', 'is_not_null']
-		  	}, {
-				id: 'in_stock',
-				label: 'In stock',
-				type: 'integer',
-				input: 'radio',
-				values: {
-				  1: 'Yes',
-				  0: 'No'
-				},
-				operators: ['equal']
-			}, {
-				id: 'price',
-				label: 'Price',
-				type: 'double',
-				validation: {
-					min: 0,
-					step: 0.01
-				}
-		  	}, {
-				id: 'id',
-				label: 'Identifier',
+		  	},{
+				id: 'ConceptConstraint',
+				label: 'Concept path',
 				type: 'string',
-				placeholder: '____-____-____',
-				operators: ['equal', 'not_equal'],
-				validation: {
-					format: /^.{4}-.{4}-.{4}$/
-				}
-			}]
+				operators: ['equal']
+		  	}]
+		});
+
+		$("form#querymetadata").submit(function (e) {
+			e.preventDefault();
 		});
 	</script>
 </body>
