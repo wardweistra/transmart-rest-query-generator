@@ -30,6 +30,14 @@ def convert_to_transmart(genericquery):
 					notsubtransmartquery['arg'] = subtransmartquery
 					subtransmartquery = notsubtransmartquery
 
+			elif genericquerypart['field'] == 'patientSetId':
+				subtransmartquery['type'] = 'PatientSetConstraint'
+				subtransmartquery['patientSetId'] = genericquerypart['value']
+				
+			elif genericquerypart['field'] == 'patientIds':
+				subtransmartquery['type'] = 'PatientSetConstraint'
+				subtransmartquery['patientIds'] = genericquerypart['value']
+
 			elif genericquerypart['field'] == 'StudyNameConstraint':
 				subtransmartquery['type'] = 'StudyNameConstraint'
 				subtransmartquery['studyId'] = genericquerypart['value']

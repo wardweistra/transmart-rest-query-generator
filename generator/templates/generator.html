@@ -74,16 +74,26 @@
 			],
 			filters: [
 			{
-				id: 'StudyNameConstraint',
-				label: 'Study ID',
-				type: 'string',
+				id: 'patientSetId',
+				label: 'Where the patients - Are in patient set:',
+				type: 'integer',
+				operators: ['equal'],
+			},{
+				id: 'patientIds',
+				label: 'Where the patients - Have patient identifiers:',
+				type: 'integer',
 				operators: ['equal']
 		  	},{
-				id: 'ConceptConstraint',
-				label: 'Concept path',
+				id: 'StudyNameConstraint',
+				label: 'Where the observations - are in study:',
 				type: 'string',
 				operators: ['equal']
-		  	}]
+			},{
+				id: 'ConceptConstraint',
+				label: 'Where the observations - have concept/tree path:',
+				type: 'string',
+				operators: ['equal']
+			}]
 		});
 
 		$("form#querymetadata").submit(function (e) {
